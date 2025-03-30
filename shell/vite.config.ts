@@ -8,6 +8,9 @@ export default defineConfig({
   server: {
     port: 3000,
   },
+  preview: {
+    port: 3000,
+  },
   plugins: [
     react(),
     tailwindcss(),
@@ -19,7 +22,7 @@ export default defineConfig({
       },
       shared: ['react', 'react-dom', 'react-redux', '@reduxjs/toolkit', '@reduxjs/toolkit/query'],
       exposes: {
-        './components': './src/components'
+        './components/Button': './src/components/button'
       },
     }),
   ],

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import { Button } from 'shell/components/Button';
 interface Pokemon {
   name: string;
   sprites: {
@@ -56,7 +56,10 @@ const PokemonDetail = () => {
         onChange={(e) => setPokemonName(e.target.value)}
         className="mt-2 border rounded p-1"
       />
-      <button type="button" onClick={fetchPokemon} className="bg-blue-500 text-white rounded p-1 ml-2">Buscar</button>
+      <button type="button" onClick={fetchPokemon} className="bg-blue-500 text-white rounde d p-1 ml-2">Buscar</button>
+      <Button onClick={() => console.log('Botón desde el Shell!')}>
+        Botón Compartido
+      </Button>
     </div>
   );
 };
