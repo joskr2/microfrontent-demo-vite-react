@@ -1,3 +1,4 @@
+import { Button } from 'shell/components/Button';
 
 const Recommendations = () => {
   const recommendations = [
@@ -12,11 +13,12 @@ const Recommendations = () => {
       <ul>
         {recommendations.map((recommendation, index) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-<li key={index} className="list-disc ml-5">
+          <li key={index} className="list-disc ml-5">
             {recommendation}
           </li>
         ))}
       </ul>
+      <Button>Ver más(desde shell)</Button>
     </div>
   );
 };

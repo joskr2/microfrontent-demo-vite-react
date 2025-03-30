@@ -20,7 +20,7 @@ export default defineConfig({
       name: 'microfrontend1',
       filename: 'remoteEntry.js',
       remotes: {
-        shell: 'http://localhost:3000/assets/remoteEntry.js', // Updated path to match shell's output
+        shell: 'http://localhost:3000/assets/remoteEntry.js', 
       },
       exposes: {
         './PokemonDetail': './src/components/PokemonDetail.tsx'

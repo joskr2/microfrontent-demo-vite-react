@@ -19,6 +19,9 @@ export default defineConfig({
     federation({
       name: 'microfrontend2',
       filename: 'remoteEntry.js',
+      remotes: {
+        shell: 'http://localhost:3000/assets/remoteEntry.js',
+      },
       exposes: {
         './Recommendations': './src/components/Recommendations',
       },
