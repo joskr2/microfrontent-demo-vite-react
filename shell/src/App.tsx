@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
 
 const PokemonDetail = React.lazy(() => import('microfrontend1/PokemonDetail'));
-// const Recommendations = React.lazy(() => import('microfrontend2/Recommendations'));
+const Recommendations = React.lazy(() => import('microfrontend2/Recommendations'));
 
 function App() {
   return (
@@ -15,12 +15,12 @@ function App() {
         </Suspense>
       </div>
 
-      {/* <div className="border p-4">
+       <div className="border p-4">
         <h2 className="text-xl font-semibold mb-2">Recomendaciones</h2>
         <Suspense fallback={<div>Cargando...</div>}>
           <Recommendations />
         </Suspense>
-      </div> */}
+      </div>
     </div>
   );
 }
