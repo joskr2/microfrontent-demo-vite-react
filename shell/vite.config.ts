@@ -18,6 +18,9 @@ export default defineConfig({
         microfrontend2: 'http://localhost:3002/assets/remoteEntry.js'
       },
       shared: ['react', 'react-dom', 'react-redux', '@reduxjs/toolkit', '@reduxjs/toolkit/query'],
+      exposes: {
+        './components': './src/components'
+      },
     }),
   ],
   build: {
