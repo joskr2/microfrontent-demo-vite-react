@@ -23,12 +23,16 @@ function App() {
             <Route path="/pokemon-filter" element={
               <div className="container mx-auto p-4">
                 <PokemonFilterScreen />
-                <LastSeenPokemons />
               </div>
             } />
             <Route path="/pokemon-detail" element={
               <div className="container mx-auto p-4">
                 <PokemonDetail />
+              </div>
+            } />
+            <Route path="/last-seen-pokemons" element={
+              <div className="container mx-auto p-4">
+                <LastSeenPokemons />
               </div>
             } />
           </Routes>

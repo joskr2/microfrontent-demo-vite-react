@@ -10,9 +10,14 @@ const LoginView = () => {
   const navigate = useNavigate();
   const { isDarkMode } = useSelector((state: RootState) => state.theme);
 
-  const handleLogin = () => {
+  const handlePokemonList = () => {
     dispatch(login('pokemon-trainer'));
     navigate('/pokemon-filter');
+  };
+
+  const handleLastSeen = () => {
+    dispatch(login('pokemon-trainer'));
+    navigate('/last-seen-pokemons');
   };
 
   return (
@@ -21,11 +26,9 @@ const LoginView = () => {
         <div className="relative aspect-square w-full">
           <img
             className="w-full h-full object-cover"
-            src="https://image.pollinations.ai/prompt/squirtle%20pokemon%20in%20a%20beach%20with%20sunset%20digital%20art"
+            src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png"
             alt="Pokemon Squirtle"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png';
-            }}
+            loading="lazy"
           />
         </div>
       </div>
@@ -40,18 +43,19 @@ const LoginView = () => {
         </Button>
 
         <Button
-          color="zinc"
+          color="blue"
           className="w-full py-3 rounded-full shadow-md hover:shadow-lg transition-all"
+          onClick={handlePokemonList}
         >
-          Trainer Profile
+          View Pokémon List
         </Button>
 
         <Button
-          color="red"
+          color="green"
           className="w-full py-3 rounded-full shadow-md hover:shadow-lg transition-all"
-          onClick={handleLogin}
+          onClick={handleLastSeen}
         >
-          Start Adventure
+          View Last Seen
         </Button>
       </div>
     </div>
