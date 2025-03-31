@@ -29,12 +29,12 @@ interface PokemonDetails {
 const PokemonFilterScreen = () => {
   const [username, setUsername] = useState('');
   const pokemonTypes = ['Fire', 'Water', 'Electric', 'Dragon', 'Ghost'];
-  const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [selectedType, setSelectedType] = useState<string | null>('Fire');
   const [pokemonList, setPokemonList] = useState<string[]>([]);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [pokemonDetails, setPokemonDetails] = useState<Record<string, PokemonDetails>>({});
 
-  const handleTypeClick = async (type: string) => {
+  const handleTypeClick = useCallback(async (type: string) => {
     setSelectedType(type);
     setPokemonList([]);
 
@@ -46,7 +46,7 @@ const PokemonFilterScreen = () => {
     } catch (error) {
       console.error(`Error fetching Pokemon de tipo ${type}:`, error);
     }
-  };
+  }, []);
 
   const fetchPokemonDetails = useCallback(async (pokemonName: string) => {
     if (pokemonDetails[pokemonName]) return;
@@ -69,17 +69,24 @@ const PokemonFilterScreen = () => {
     }
   }, [pokemonList, fetchPokemonDetails]);
 
+  // Load Fire type Pokemon by default
+  useEffect(() => {
+    if (selectedType) {
+      handleTypeClick(selectedType);
+    }
+  }, [handleTypeClick, selectedType]);
+
   return (
-    <div className={`min-h-screen bg-gray-100 ${theme === 'dark' ? 'bg-gray-800 text-white' : 'text-gray-800'} p-8`}>
-      <header className="flex items-center justify-between mb-6">
-        <div className="flex items-center">
+    <div className={`min-h-screen bg-gray-100 ${theme === 'dark' ? 'bg-gray-800 text-white' : 'text-gray-800'} p-4 md:p-8`}>
+      <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+        <div className="flex items-center w-full sm:w-auto">
           <Input
             type="text"
             placeholder="Buscador"
-            className={`rounded-full px-4 py-2 mr-4 ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-gray-800'}`}
+            className={`rounded-full px-4 py-2 mr-4 w-full sm:w-auto ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-gray-800'}`}
           />
         </div>
-        <div>
+        <div className="flex items-center w-full sm:w-auto justify-between sm:justify-end">
           <span>Nombre usuario</span>
           <Button
             color="zinc"
@@ -101,7 +108,7 @@ const PokemonFilterScreen = () => {
         />
       </div>
 
-      <div className="grid grid-cols-5 gap-4 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 md:gap-4 mb-8">
         {pokemonTypes.map((type) => (
           <Badge
             key={type}
@@ -130,11 +137,11 @@ const PokemonFilterScreen = () => {
                     src={pokemonDetails[pokemonName]?.sprites.other['official-artwork'].front_default ||
                       pokemonDetails[pokemonName]?.sprites.front_default}
                     alt={pokemonName}
-                    className="w-32 h-32 object-contain"
+                    className="w-24 h-24 sm:w-32 sm:h-32 object-contain"
                     loading="lazy"
                   />
                 ) : (
-                  <div className={`w-32 h-32 flex items-center justify-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                  <div className={`w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
                     Loading...
                   </div>
                 )}
