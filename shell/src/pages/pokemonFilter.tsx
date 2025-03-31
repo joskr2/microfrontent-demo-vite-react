@@ -8,6 +8,7 @@ import { setSelectedPokemon } from '../store/selectedPokemonSlice';
 import { selectCurrentPokemon } from '../store';
 
 const PokemonFilterScreen = () => {
+  const navigate = useNavigate();
   const pokemonTypes = ['Fire', 'Water', 'Electric', 'Dragon', 'Ghost'];
   const [selectedType, setSelectedType] = useState<string>('Fire');
   const [searchTerm, setSearchTerm] = useState('');
@@ -106,13 +107,27 @@ const PokemonFilterScreen = () => {
             </Button>
           </form>
         </div>
-        <div className="flex items-center justify-end">
+        <div className="flex items-center justify-end gap-2">
           <Button
-            color="zinc"
-            className="px-4 py-2 rounded-md transition-all hover:bg-gray-200 dark:hover:bg-gray-600"
+            color="red"
+            className="px-4 py-2 rounded-md transition-all hover:bg-red-600 hover:text-white"
+            onClick={() => navigate(-1)}
+          >
+            Volver
+          </Button>
+          <Button
+            color="indigo"
+            className="px-4 py-2 rounded-md transition-all hover:bg-indigo-600 hover:text-white"
             onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
           >
             {theme === 'light' ? 'Modo oscuro' : 'Modo claro'}
+          </Button>
+          <Button
+            color="emerald"
+            className="px-4 py-2 rounded-md transition-all hover:bg-emerald-600 hover:text-white"
+            onClick={() => navigate('/last-seen-pokemons')}
+          >
+            Ver Recientes
           </Button>
         </div>
       </header>

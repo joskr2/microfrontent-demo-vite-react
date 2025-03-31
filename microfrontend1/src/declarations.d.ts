@@ -268,5 +268,6 @@ declare module 'shell/store' {
       currentPokemon: PokemonDetails | null;
       history: PokemonDetails[];
     };
+    theme: ThemeState;  // Add this line
   }
 }

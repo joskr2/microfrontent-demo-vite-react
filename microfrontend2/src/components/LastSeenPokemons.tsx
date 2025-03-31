@@ -11,8 +11,6 @@ const LastSeenPokemons = () => {
   const navigate = useNavigate();
   const lastSeen = useSelector((state: RootState) => state.selectedPokemon.history.slice(0, 5));
 
-
-
   const handlePokemonClick = (pokemon: PokemonDetails) => {
     if (pokemon) {
       console.log("Dispatching setSelectedPokemon:", pokemon.name);
@@ -51,13 +49,22 @@ const LastSeenPokemons = () => {
           ))}
         </div>
       )}
-      <Button
-        color="blue"
-        onClick={handleGoBack}
-        className="px-6 py-2"
-      >
-        Volver
-      </Button>
+      <div className="flex gap-4 mt-6">
+        <Button
+          color="blue"
+          onClick={handleGoBack}
+          className="px-6 py-2"
+        >
+          Volver
+        </Button>
+        <Button
+          color="green"
+          onClick={() => navigate('/')}
+          className="px-6 py-2"
+        >
+          Inicio
+        </Button>
+      </div>
     </div>
   );
 };
