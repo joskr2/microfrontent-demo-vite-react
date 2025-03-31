@@ -24,6 +24,7 @@ export default defineConfig({
       exposes: {
         './components': './src/components/index',
         './components/Card': './src/components/card',
+        './components/Toast': './src/components/toast',
         './components/Alert': './src/components/alert',
         './components/Badge': './src/components/badge',
         './components/Button': './src/components/button',

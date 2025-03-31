@@ -8,6 +8,7 @@ export * from './divider';
 export * from './dropdown';
 export * from './fieldset';
 export * from './input';
+export * from './toast';
 export * from './link';
 export * from './listbox';
 export * from './navbar';

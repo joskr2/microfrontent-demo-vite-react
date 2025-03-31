@@ -1,35 +1,11 @@
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { Button, Input, Badge } from '../components';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Button, Input, Badge, Toast } from '../components';
 import { Card } from '../components/card';
 import { useGetPokemonByTypeQuery, useGetPokemonDetailsQuery } from '../store/pokemonApi';
 import { setSelectedPokemon } from '../store/selectedPokemonSlice';
-import { store } from '../store';
-// import { useSelector } from 'react-redux';
-// import { selectPokemonHistory } from '../store/index';
-
-// const PokemonHistoryComponent = () => {
-//   // This will give you access to the history array
-//   const pokemonHistory = useSelector(selectPokemonHistory);
-
-//   return (
-//     <div>
-//       <h2>Recently Viewed Pokemon</h2>
-//       {pokemonHistory.length === 0 ? (
-//         <p>No Pokemon viewed yet</p>
-//       ) : (
-//         <ul>
-//           {pokemonHistory.map((pokemon) => (
-//             <li key={pokemon.name}>
-//               {pokemon.name}
-//               {/* You can display more details or images here */}
-//             </li>
-//           ))}
-//         </ul>
-//       )}
-//     </div>
-//   );
-// };
+// import { store } from '../store';
+import { selectCurrentPokemon } from '../store';
 
 const PokemonFilterScreen = () => {
   const pokemonTypes = ['Fire', 'Water', 'Electric', 'Dragon', 'Ghost'];
@@ -37,6 +13,8 @@ const PokemonFilterScreen = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [isSearching, setIsSearching] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const currentPokemon = useSelector(selectCurrentPokemon);
 
   // RTK Query hooks
   const { data: pokemonList = [], isLoading: isLoadingList } = useGetPokemonByTypeQuery(selectedType, {
@@ -49,6 +27,17 @@ const PokemonFilterScreen = () => {
     : isSearching
       ? [searchTerm.toLowerCase().trim()]
       : pokemonList.filter(name => name.toLowerCase().includes(searchTerm.toLowerCase()));
+
+  // Show toast when currentPokemon changes
+  useEffect(() => {
+    if (currentPokemon) {
+      setShowToast(true);
+      const timer = setTimeout(() => {
+        setShowToast(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [currentPokemon]);
 
   const handleTypeClick = (type: string) => {
     setSearchTerm('');
@@ -75,6 +64,29 @@ const PokemonFilterScreen = () => {
 
   return (
     <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-800'} p-4 md:p-8`}>
+      {/* Toast for selected Pokemon */}
+      {currentPokemon && (
+        <Toast
+          isVisible={showToast}
+          type="info"
+          title={`Pokémon seleccionado: ${currentPokemon.name}`}
+          message={`Has seleccionado a ${currentPokemon.name.charAt(0).toUpperCase() + currentPokemon.name.slice(1)}`}
+          position="bottom-right"
+          onClose={() => setShowToast(false)}
+          icon={
+            currentPokemon.sprites && (
+              <img
+                src={currentPokemon.sprites.front_default ||
+                  (currentPokemon.sprites.other &&
+                    (currentPokemon.sprites.other['official-artwork']?.front_default ||
+                      currentPokemon.sprites.other.dream_world?.front_default))}
+                alt={currentPokemon.name}
+                className="h-10 w-10 rounded-full object-cover"
+              />
+            )
+          }
+        />
+      )}
       <header className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4 bg-white dark:bg-gray-700 rounded-lg shadow-sm p-4">
         <div className="w-full sm:w-2/3">
           <form onSubmit={handleSearchSubmit} className="flex w-full">
@@ -151,56 +163,41 @@ const PokemonCard = ({ name, theme }: { name: string; theme: 'light' | 'dark' })
 
   const handlePokemonClick = () => {
     if (pokemonDetails) {
-      console.log('Before dispatch - Current state:', store.getState().selectedPokemon);
-
-      // Ya no deberías necesitar el casting si la interfaz es consistente
+      // Dispatch the action to update the store
       dispatch(setSelectedPokemon(pokemonDetails));
-
-      // Log the selected Pokemon
-      console.log('Selected Pokemon:', pokemonDetails);
-
-      setTimeout(() => {
-        const state = store.getState();
-        console.log('After dispatch - Updated state:', state.selectedPokemon);
-        console.log('Pokemon History:', state.selectedPokemon.history);
-      }, 2000);
     }
   };
 
   return (
-    <>
-
-      <Card
-        className={`p-5 flex flex-col items-center ${theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-white hover:bg-gray-50'} rounded-lg shadow-sm transition-all cursor-pointer`}
-        onClick={handlePokemonClick}
-      >
-        <h3 className={`font-semibold mb-3 capitalize text-lg ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>
-          {name}
-        </h3>
-        {isLoading ? (
-          <div className={`w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-            Loading...
-          </div>
-        ) : isError ? (
-          <div className={`w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-            Pokémon no encontrado
-          </div>
-        ) : pokemonDetails ? (
-          <img
-            src={pokemonDetails.sprites.other['official-artwork'].front_default ||
-              pokemonDetails.sprites.front_default}
-            alt={name}
-            className="w-28 h-28 sm:w-36 sm:h-36 object-contain"
-            loading="lazy"
-          />
-        ) : (
-          <div className={`w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-            Error loading image
-          </div>
-        )}
-      </Card>
-      {/* <PokemonHistoryComponent /> */}
-    </>
+    <Card
+      className={`p-5 flex flex-col items-center ${theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-white hover:bg-gray-50'} rounded-lg shadow-sm transition-all cursor-pointer`}
+      onClick={handlePokemonClick}
+    >
+      <h3 className={`font-semibold mb-3 capitalize text-lg ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>
+        {name}
+      </h3>
+      {isLoading ? (
+        <div className={`w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+          Loading...
+        </div>
+      ) : isError ? (
+        <div className={`w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+          Pokémon no encontrado
+        </div>
+      ) : pokemonDetails ? (
+        <img
+          src={pokemonDetails.sprites.other['official-artwork'].front_default ||
+            pokemonDetails.sprites.front_default}
+          alt={name}
+          className="w-28 h-28 sm:w-36 sm:h-36 object-contain"
+          loading="lazy"
+        />
+      ) : (
+        <div className={`w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+          Error loading image
+        </div>
+      )}
+    </Card>
   );
 };
 
