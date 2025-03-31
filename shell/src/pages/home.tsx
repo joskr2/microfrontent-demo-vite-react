@@ -21,8 +21,12 @@ const LoginView = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 dark:from-zinc-800 dark:to-zinc-900 p-4">
-      <div className="w-full max-w-md mb-8 overflow-hidden rounded-2xl shadow-xl">
+    <div className={`flex flex-col items-center justify-center min-h-screen p-4 transition-colors duration-300 ${isDarkMode
+        ? 'bg-gradient-to-br from-zinc-800 to-zinc-900 text-white'
+        : 'bg-gradient-to-br from-gray-100 to-gray-300 text-black'
+      }`}>
+      <div className={`w-full max-w-md mb-8 overflow-hidden rounded-2xl shadow-xl transition-colors duration-300 ${isDarkMode ? 'bg-zinc-700' : 'bg-white'
+        }`}>
         <div className="relative aspect-square w-full">
           <img
             className="w-full h-full object-cover"
