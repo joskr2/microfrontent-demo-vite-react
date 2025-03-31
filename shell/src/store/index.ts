@@ -1,12 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
-import { pokemonApi, selectedPokemonSlice } from './pokemonApi';
+import { pokemonApi } from './pokemonApi';
+import selectedPokemonReducer from './selectedPokemonSlice';
 import themeReducer from './themeSlice';
 
 export const store = configureStore({
   reducer: {
     [pokemonApi.reducerPath]: pokemonApi.reducer,
-    selectedPokemon: selectedPokemonSlice.reducer,
+    selectedPokemon: selectedPokemonReducer,
     theme: themeReducer
   },
   middleware: (getDefaultMiddleware) =>
