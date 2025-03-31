@@ -23,6 +23,7 @@ export default defineConfig({
       shared: ['react', 'react-dom', 'react-redux', '@reduxjs/toolkit', '@reduxjs/toolkit/query'],
       exposes: {
         './components': './src/components/index',
+        './components/Card': './src/components/card',
         './components/Alert': './src/components/alert',
         './components/Badge': './src/components/badge',
         './components/Button': './src/components/button',
