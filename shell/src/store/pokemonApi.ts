@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 interface PokemonTypeResponse {
   pokemon: Array<{
@@ -23,6 +24,34 @@ interface PokemonDetails {
   };
   name: string;
 }
+
+// Create a slice for selected Pokemon
+export const selectedPokemonSlice = createSlice({
+  name: 'selectedPokemon',
+  initialState: {
+    currentPokemon: null as PokemonDetails | null,
+    history: [] as PokemonDetails[]
+  },
+  reducers: {
+    setSelectedPokemon: (state, action: PayloadAction<PokemonDetails>) => {
+      state.currentPokemon = action.payload;
+
+      // Add to history if not already the most recent
+      if (!state.history.length || state.history[0].name !== action.payload.name) {
+        // Remove duplicates from history
+        state.history = state.history.filter(p => p.name !== action.payload.name);
+        // Add to the beginning of history
+        state.history.unshift(action.payload);
+        // Limit history to 10 items
+        if (state.history.length > 10) {
+          state.history = state.history.slice(0, 10);
+        }
+      }
+    }
+  }
+});
+
+export const { setSelectedPokemon } = selectedPokemonSlice.actions;
 
 export const pokemonApi = createApi({
   reducerPath: 'pokemonApi',

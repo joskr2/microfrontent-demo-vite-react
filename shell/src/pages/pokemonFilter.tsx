@@ -1,7 +1,10 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Button, Input, Badge } from '../components';
 import { Card } from '../components/card';
 import { useGetPokemonByTypeQuery, useGetPokemonDetailsQuery } from '../store/pokemonApi';
+import { setSelectedPokemon } from '../store/pokemonApi';
+import { store } from '../store';
 
 const PokemonFilterScreen = () => {
   const pokemonTypes = ['Fire', 'Water', 'Electric', 'Dragon', 'Ghost'];
@@ -118,10 +121,27 @@ const PokemonFilterScreen = () => {
 
 // Separate component for Pokemon card to use individual queries
 const PokemonCard = ({ name, theme }: { name: string; theme: 'light' | 'dark' }) => {
+  const dispatch = useDispatch();
   const { data: pokemonDetails, isLoading, isError } = useGetPokemonDetailsQuery(name);
 
+  const handlePokemonClick = () => {
+    if (pokemonDetails) {
+      dispatch(setSelectedPokemon(pokemonDetails));
+    }
+    // Log the selected Pokemon
+    console.log('Selected Pokemon:', pokemonDetails);
+    setTimeout(() => {
+      const state = store.getState();
+      console.log('Pokemon History:', state.selectedPokemon.history);
+    }, 100);
+
+  };
+
   return (
-    <Card className={`p-5 flex flex-col items-center ${theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-white hover:bg-gray-50'} rounded-lg shadow-sm transition-all`}>
+    <Card
+      className={`p-5 flex flex-col items-center ${theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-white hover:bg-gray-50'} rounded-lg shadow-sm transition-all cursor-pointer`}
+      onClick={handlePokemonClick}
+    >
       <h3 className={`font-semibold mb-3 capitalize text-lg ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>
         {name}
       </h3>
