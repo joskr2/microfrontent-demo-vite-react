@@ -20,12 +20,12 @@ export default defineConfig({
       name: 'microfrontend1',
       filename: 'remoteEntry.js',
       remotes: {
-        shell: 'http://localhost:3000/assets/remoteEntry.js', 
+        shell: 'http://localhost:3000/assets/remoteEntry.js',
       },
       exposes: {
         './PokemonDetail': './src/components/PokemonDetail.tsx'
       },
-      shared: ['react', 'react-dom', 'react-redux', '@reduxjs/toolkit', '@reduxjs/toolkit/query'],
+      shared: ['react', 'react-dom', 'react-redux', '@reduxjs/toolkit', '@reduxjs/toolkit/query', 'react-router-dom'],
     }),
   ],
   build: {

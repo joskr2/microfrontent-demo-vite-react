@@ -25,7 +25,7 @@ export default defineConfig({
       exposes: {
         './Recommendations': './src/components/Recommendations',
       },
-      shared: ['react', 'react-dom', 'react-redux', '@reduxjs/toolkit', '@reduxjs/toolkit/query'],
+      shared: ['react', 'react-dom', 'react-redux', '@reduxjs/toolkit', '@reduxjs/toolkit/query','react-router-dom'],
     }),
   ],
   build: {

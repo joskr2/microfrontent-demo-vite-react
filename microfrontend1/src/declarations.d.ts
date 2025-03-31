@@ -225,3 +225,48 @@ declare module 'shell/components/DescriptionList' {
   export const DescriptionTerm: React.FC<React.ComponentPropsWithoutRef<'dt'>>;
   export const DescriptionDetails: React.FC<React.ComponentPropsWithoutRef<'dd'>>;
 }
+
+declare module 'shell/store' {
+  export interface PokemonType {
+    type: {
+      name: string;
+    };
+  }
+
+  export interface PokemonAbility {
+    ability: {
+      name: string;
+    };
+  }
+
+  export interface PokemonDetails {
+    id: number;
+    name: string;
+    sprites: {
+      front_default: string;
+      other?: {
+        'official-artwork'?: {
+          front_default: string;
+        };
+        dream_world?: {
+          front_default: string;
+        };
+      };
+    };
+    types?: PokemonType[];
+    abilities?: PokemonAbility[];
+    stats?: Array<{
+      base_stat: number;
+      stat: {
+        name: string;
+      };
+    }>;
+  }
+
+  export interface RootState {
+    selectedPokemon: {
+      currentPokemon: PokemonDetails | null;
+      history: PokemonDetails[];
+    };
+  }
+}

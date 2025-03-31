@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, Input, Badge, Toast } from '../components';
 import { Card } from '../components/card';
 import { useGetPokemonByTypeQuery, useGetPokemonDetailsQuery } from '../store/pokemonApi';
+import { useNavigate } from 'react-router-dom';
 import { setSelectedPokemon } from '../store/selectedPokemonSlice';
-// import { store } from '../store';
 import { selectCurrentPokemon } from '../store';
 
 const PokemonFilterScreen = () => {
@@ -159,12 +159,20 @@ const PokemonFilterScreen = () => {
 // Separate component for Pokemon card to use individual queries
 const PokemonCard = ({ name, theme }: { name: string; theme: 'light' | 'dark' }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { data: pokemonDetails, isLoading, isError } = useGetPokemonDetailsQuery(name);
 
   const handlePokemonClick = () => {
     if (pokemonDetails) {
-      // Dispatch the action to update the store
+      // 1. Despacha la acción para guardar el Pokémon en el store global del SHELL
+      console.log("Dispatching setSelectedPokemon:", pokemonDetails.name); // Log para depuración
       dispatch(setSelectedPokemon(pokemonDetails));
+
+      // 2. Navega a la ruta de detalle USANDO EL ROUTER (NO window.location.href)
+      console.log("Navigating to /pokemon-detail"); // Log para depuración
+      navigate('/pokemon-detail');
+    } else {
+      console.warn("Pokemon details not available to navigate for:", name);
     }
   };
 

@@ -1,65 +1,80 @@
-import React, { useState } from 'react';
 import { Button } from 'shell/components/Button';
-interface Pokemon {
-  name: string;
-  sprites: {
-    front_default: string;
-  };
-}
+import { useSelector } from 'react-redux';
+import type { RootState } from 'shell/store';
+import { useNavigate } from'react-router-dom';
 
 const PokemonDetail = () => {
-  const [pokemonName, setPokemonName] = useState('charmander');
-  const [pokemon, setPokemon] = useState<Pokemon | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  // Get the selected Pokemon from the shell's global state using the imported types
+  const selectedPokemon = useSelector((state: RootState) => state.selectedPokemon.currentPokemon);
+  const navigate = useNavigate();
 
-  const fetchPokemon = React.useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`);
-      if (!response.ok) {
-        throw new Error('No se encontró el Pokémon.');
-      }
-      const data = await response.json();
-      setPokemon(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error occurred');
-      setPokemon(null);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [pokemonName]);
-
-  React.useEffect(() => {
-    fetchPokemon();
-  }, [fetchPokemon]);
+  const handleGoBack = () => {
+    navigate(-1); // Navega una entrada atrás en el historial del navegador
+    // O podrías navegar a una ruta específica como navigate('/pokemon-filter');
+  };
 
   return (
     <div className="bg-gray-100 p-4 rounded-md">
-      <h3 className="text-lg font-semibold mb-2">Detalle de {pokemonName}:</h3>
-      {isLoading ? (
-        <p>Cargando...</p>
-      ) : error ? (
-        <p>Error al cargar el Pokémon: {error}</p>
-      ) : pokemon ? (
-        <div>
-          <p>Nombre: {pokemon.name}</p>
-          <img src={pokemon.sprites?.front_default} alt={pokemon.name} className="w-32 h-32" />
-        </div>
+      <h3 className="text-lg font-semibold mb-2">Pokémon Seleccionado:</h3>
+
+      {!selectedPokemon ? (
+        <p>No se ha seleccionado ningún Pokémon desde la aplicación principal.</p>
       ) : (
-        <p>No se encontró el Pokémon.</p>
+        <div>
+          <p>Nombre: {selectedPokemon.name}</p>
+          <img
+            src={
+              selectedPokemon.sprites.other?.['official-artwork']?.front_default ||
+              selectedPokemon.sprites.front_default
+            }
+            alt={selectedPokemon.name}
+            className="w-32 h-32"
+          />
+
+          {selectedPokemon.types && (
+            <div className="mt-2">
+              <p className="font-medium">Tipos:</p>
+              <div className="flex gap-2">
+                {selectedPokemon.types.map((typeInfo: { type: { name: string } }) => (
+                  <span
+                    key={`type-${typeInfo.type.name}`}
+                    className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                  >
+                    {typeInfo.type.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {selectedPokemon.abilities && (
+            <div className="mt-2">
+              <p className="font-medium">Habilidades:</p>
+              <ul className="list-disc list-inside">
+                {selectedPokemon.abilities.map((abilityInfo: { ability: { name: string } }) => (
+                  <li
+                    key={`ability-${abilityInfo.ability.name}`}
+                    className="capitalize"
+                  >
+                    {abilityInfo.ability.name}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+            <div className="mt-6 text-center">
+              {/* Usa el botón importado del Shell */}
+              <Button
+                color="blue"
+                onClick={handleGoBack}
+                className="px-6 py-2"
+              >
+                Volver
+              </Button>
+            </div>
+        </div>
       )}
-      <input
-        type="text"
-        value={pokemonName}
-        onChange={(e) => setPokemonName(e.target.value)}
-        className="mt-2 border rounded p-1"
-      />
-      <button type="button" onClick={fetchPokemon} className="bg-blue-500 text-white rounde d p-1 ml-2">Buscar</button>
-      <Button onClick={() => console.log('Botón desde el Shell!')}>
-        Botón Compartido
-      </Button>
     </div>
   );
 };
