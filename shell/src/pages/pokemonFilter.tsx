@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState} from 'react';
 import { Button, Input, Badge } from '../components';
 import { Card } from '../components/card';
 import { useGetPokemonByTypeQuery, useGetPokemonDetailsQuery } from '../store/pokemonApi';
@@ -9,35 +9,66 @@ const PokemonFilterScreen = () => {
   const [selectedType, setSelectedType] = useState<string>('Fire');
   const [searchTerm, setSearchTerm] = useState('');
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [isSearching, setIsSearching] = useState(false);
 
   // RTK Query hooks
   const { data: pokemonList = [], isLoading: isLoadingList } = useGetPokemonByTypeQuery(selectedType, {
-    skip: !selectedType,
+    skip: !selectedType || isSearching,
   });
 
   // Filter pokemon based on search term
-  const filteredPokemonList = pokemonList.filter(name =>
-    name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredPokemonList = searchTerm.trim() === ''
+    ? pokemonList
+    : isSearching
+      ? [searchTerm.toLowerCase().trim()]
+      : pokemonList.filter(name => name.toLowerCase().includes(searchTerm.toLowerCase()));
 
   const handleTypeClick = (type: string) => {
+    setSearchTerm('');
+    setIsSearching(false);
     setSelectedType(type);
+  };
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+
+    // If search is empty, show type-filtered results
+    if (value.trim() === '') {
+      setIsSearching(false);
+    }
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm.trim() !== '') {
+      setIsSearching(true);
+    }
   };
 
   return (
     <div className={`min-h-screen bg-gray-100 ${theme === 'dark' ? 'bg-gray-800 text-white' : 'text-gray-800'} p-4 md:p-8`}>
       <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
         <div className="flex items-center w-full sm:w-auto">
-          <Input
-            type="text"
-            placeholder="Buscar Pokémon"
-            className={`rounded-full px-4 py-2 mr-4 w-full sm:w-auto ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-gray-800'}`}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+          <form onSubmit={handleSearchSubmit} className="w-full sm:w-auto flex">
+            <Input
+              type="text"
+              placeholder="Buscar Pokémon"
+              className={`rounded-full px-4 py-2 mr-2 w-full sm:w-auto ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-gray-800'}`}
+              value={searchTerm}
+              onChange={handleSearch}
+            />
+            <Button
+              type="submit"
+              color="blue"
+              className="rounded-full px-4 py-2"
+            >
+              Buscar
+            </Button>
+          </form>
         </div>
         <div className="flex items-center w-full sm:w-auto justify-between sm:justify-end">
-          <span>Nombre usuario</span>
+          <span>{username || 'Invitado'}</span>
           <Button
             color="zinc"
             className="ml-4 px-3 py-2 rounded-md"
@@ -51,7 +82,7 @@ const PokemonFilterScreen = () => {
       <div className="mb-6">
         <Input
           type="text"
-          placeholder="usuario"
+          placeholder="Usuario"
           className={`rounded-md px-4 py-2 w-full ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-gray-800'}`}
           value={username}
           onChange={(e) => setUsername(e.target.value)}
@@ -63,7 +94,7 @@ const PokemonFilterScreen = () => {
           <Badge
             key={type}
             color="blue"
-            className={`rounded-md py-2 px-4 text-center ${selectedType === type ? 'bg-blue-700' : ''}`}
+            className={`rounded-md py-2 px-4 text-center ${selectedType === type && !isSearching ? 'bg-blue-700' : ''}`}
             onClick={() => handleTypeClick(type)}
           >
             {type}
@@ -71,35 +102,35 @@ const PokemonFilterScreen = () => {
         ))}
       </div>
 
-      {selectedType && (
-        <div className="mt-8">
-          <h2 className={`text-xl font-semibold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>
-            Pokémon de tipo {selectedType}:
-          </h2>
-          {isLoadingList ? (
-            <div className="text-center py-8">Cargando Pokémon...</div>
-          ) : filteredPokemonList.length === 0 ? (
-            <div className="text-center py-8">No se encontraron Pokémon con ese nombre</div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {filteredPokemonList.map((pokemonName) => (
-                <PokemonCard
-                  key={pokemonName}
-                  name={pokemonName}
-                  theme={theme}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+      <div className="mt-8">
+        <h2 className={`text-xl font-semibold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>
+          {isSearching
+            ? `Resultados para: ${searchTerm}`
+            : `Pokémon de tipo ${selectedType}:`}
+        </h2>
+        {isLoadingList && !isSearching ? (
+          <div className="text-center py-8">Cargando Pokémon...</div>
+        ) : filteredPokemonList.length === 0 ? (
+          <div className="text-center py-8">No se encontraron Pokémon</div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {filteredPokemonList.map((pokemonName) => (
+              <PokemonCard
+                key={pokemonName}
+                name={pokemonName}
+                theme={theme}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
 
 // Separate component for Pokemon card to use individual queries
 const PokemonCard = ({ name, theme }: { name: string; theme: 'light' | 'dark' }) => {
-  const { data: pokemonDetails, isLoading } = useGetPokemonDetailsQuery(name);
+  const { data: pokemonDetails, isLoading, isError } = useGetPokemonDetailsQuery(name);
 
   return (
     <Card className={`p-4 flex flex-col items-center ${theme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
@@ -109,6 +140,10 @@ const PokemonCard = ({ name, theme }: { name: string; theme: 'light' | 'dark' })
       {isLoading ? (
         <div className={`w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
           Loading...
+        </div>
+      ) : isError ? (
+        <div className={`w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+          Pokémon no encontrado
         </div>
       ) : pokemonDetails ? (
         <img
