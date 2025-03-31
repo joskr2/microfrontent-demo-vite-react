@@ -1,10 +1,9 @@
-import { useState} from 'react';
+import { useState } from 'react';
 import { Button, Input, Badge } from '../components';
 import { Card } from '../components/card';
 import { useGetPokemonByTypeQuery, useGetPokemonDetailsQuery } from '../store/pokemonApi';
 
 const PokemonFilterScreen = () => {
-  const [username, setUsername] = useState('');
   const pokemonTypes = ['Fire', 'Water', 'Electric', 'Dragon', 'Ghost'];
   const [selectedType, setSelectedType] = useState<string>('Fire');
   const [searchTerm, setSearchTerm] = useState('');
@@ -47,54 +46,43 @@ const PokemonFilterScreen = () => {
   };
 
   return (
-    <div className={`min-h-screen bg-gray-100 ${theme === 'dark' ? 'bg-gray-800 text-white' : 'text-gray-800'} p-4 md:p-8`}>
-      <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
-        <div className="flex items-center w-full sm:w-auto">
-          <form onSubmit={handleSearchSubmit} className="w-full sm:w-auto flex">
+    <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-800'} p-4 md:p-8`}>
+      <header className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4 bg-white dark:bg-gray-700 rounded-lg shadow-sm p-4">
+        <div className="w-full sm:w-2/3">
+          <form onSubmit={handleSearchSubmit} className="flex w-full">
             <Input
               type="text"
               placeholder="Buscar Pokémon"
-              className={`rounded-full px-4 py-2 mr-2 w-full sm:w-auto ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-gray-800'}`}
+              className={`rounded-l-lg px-4 py-2 w-full ${theme === 'dark' ? 'bg-gray-600 text-white border-gray-600' : 'bg-white text-gray-800 border-gray-200'}`}
               value={searchTerm}
               onChange={handleSearch}
             />
             <Button
               type="submit"
               color="blue"
-              className="rounded-full px-4 py-2"
+              className="rounded-r-lg px-6 py-2 font-medium"
             >
               Buscar
             </Button>
           </form>
         </div>
-        <div className="flex items-center w-full sm:w-auto justify-between sm:justify-end">
-          <span>{username || 'Invitado'}</span>
+        <div className="flex items-center justify-end">
           <Button
             color="zinc"
-            className="ml-4 px-3 py-2 rounded-md"
+            className="px-4 py-2 rounded-md transition-all hover:bg-gray-200 dark:hover:bg-gray-600"
             onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
           >
-            {theme === 'light' ? 'Tema oscuro' : 'Tema claro'}
+            {theme === 'light' ? 'Modo oscuro' : 'Modo claro'}
           </Button>
         </div>
       </header>
-
-      <div className="mb-6">
-        <Input
-          type="text"
-          placeholder="Usuario"
-          className={`rounded-md px-4 py-2 w-full ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-gray-800'}`}
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-      </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 md:gap-4 mb-8">
         {pokemonTypes.map((type) => (
           <Badge
             key={type}
             color="blue"
-            className={`rounded-md py-2 px-4 text-center ${selectedType === type && !isSearching ? 'bg-blue-700' : ''}`}
+            className={`rounded-md py-3 px-4 text-center cursor-pointer transition-all hover:bg-blue-600 hover:text-white ${selectedType === type && !isSearching ? 'bg-blue-700 text-white' : ''}`}
             onClick={() => handleTypeClick(type)}
           >
             {type}
@@ -103,17 +91,17 @@ const PokemonFilterScreen = () => {
       </div>
 
       <div className="mt-8">
-        <h2 className={`text-xl font-semibold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>
+        <h2 className={`text-xl font-semibold mb-6 ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>
           {isSearching
             ? `Resultados para: ${searchTerm}`
             : `Pokémon de tipo ${selectedType}:`}
         </h2>
         {isLoadingList && !isSearching ? (
-          <div className="text-center py-8">Cargando Pokémon...</div>
+          <div className="text-center py-8 bg-white dark:bg-gray-700 rounded-lg shadow-sm">Cargando Pokémon...</div>
         ) : filteredPokemonList.length === 0 ? (
-          <div className="text-center py-8">No se encontraron Pokémon</div>
+          <div className="text-center py-8 bg-white dark:bg-gray-700 rounded-lg shadow-sm">No se encontraron Pokémon</div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {filteredPokemonList.map((pokemonName) => (
               <PokemonCard
                 key={pokemonName}
@@ -133,8 +121,8 @@ const PokemonCard = ({ name, theme }: { name: string; theme: 'light' | 'dark' })
   const { data: pokemonDetails, isLoading, isError } = useGetPokemonDetailsQuery(name);
 
   return (
-    <Card className={`p-4 flex flex-col items-center ${theme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
-      <h3 className={`font-semibold mb-2 capitalize ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>
+    <Card className={`p-5 flex flex-col items-center ${theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-white hover:bg-gray-50'} rounded-lg shadow-sm transition-all`}>
+      <h3 className={`font-semibold mb-3 capitalize text-lg ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>
         {name}
       </h3>
       {isLoading ? (
@@ -150,7 +138,7 @@ const PokemonCard = ({ name, theme }: { name: string; theme: 'light' | 'dark' })
           src={pokemonDetails.sprites.other['official-artwork'].front_default ||
             pokemonDetails.sprites.front_default}
           alt={name}
-          className="w-24 h-24 sm:w-32 sm:h-32 object-contain"
+          className="w-28 h-28 sm:w-36 sm:h-36 object-contain"
           loading="lazy"
         />
       ) : (
