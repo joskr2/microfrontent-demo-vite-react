@@ -1,23 +1,27 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { store } from './store/store';
 import LoginView from './pages/home';
 import PokemonFilterScreen from './pages/pokemonFilter';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={
-          <div className="container mx-auto p-4">
-            <LoginView />
-          </div>
-        } />
-        <Route path="/pokemon-filter" element={
-          <div className="container mx-auto p-4">
-            <PokemonFilterScreen />
-          </div>
-        } />
-      </Routes>
-    </Router>
+    <Provider store={store}>
+      <Router>
+        <Routes>
+          <Route path="/" element={
+            <div className="container mx-auto p-4">
+              <LoginView />
+            </div>
+          } />
+          <Route path="/pokemon-filter" element={
+            <div className="container mx-auto p-4">
+              <PokemonFilterScreen />
+            </div>
+          } />
+        </Routes>
+      </Router>
+    </Provider>
   );
 }
 
