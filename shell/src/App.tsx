@@ -1,10 +1,23 @@
-import LoginView from "./pages/home";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LoginView from './pages/home';
+import PokemonFilterScreen from './pages/pokemonFilter';
 
 function App() {
   return (
-    <div className="container mx-auto p-4">
-      <LoginView />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={
+          <div className="container mx-auto p-4">
+            <LoginView />
+          </div>
+        } />
+        <Route path="/pokemon-filter" element={
+          <div className="container mx-auto p-4">
+            <PokemonFilterScreen />
+          </div>
+        } />
+      </Routes>
+    </Router>
   );
 }
 

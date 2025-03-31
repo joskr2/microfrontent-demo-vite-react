@@ -2,14 +2,17 @@ import { Button } from '../components/button';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../store';
 import { toggleTheme } from '../store/themeSlice';
+import { useNavigate } from 'react-router-dom';
 import { login } from '../store/userSlice';
 
 const LoginView = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { isDarkMode } = useSelector((state: RootState) => state.theme);
 
   const handleLogin = () => {
     dispatch(login('pokemon-trainer'));
+    navigate('/pokemon-filter');
   };
 
   return (
