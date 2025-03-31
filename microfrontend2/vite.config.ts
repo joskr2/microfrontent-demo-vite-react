@@ -23,9 +23,9 @@ export default defineConfig({
         shell: 'http://localhost:3000/assets/remoteEntry.js',
       },
       exposes: {
-        './Recommendations': './src/components/Recommendations',
+        './LastSeenPokemons': './src/components/LastSeenPokemons.tsx',
       },
-      shared: ['react', 'react-dom', 'react-redux', '@reduxjs/toolkit', '@reduxjs/toolkit/query','react-router-dom'],
+      shared: ['react', 'react-dom', 'react-redux', '@reduxjs/toolkit', '@reduxjs/toolkit/query', 'react-router-dom'],
     }),
   ],
   build: {

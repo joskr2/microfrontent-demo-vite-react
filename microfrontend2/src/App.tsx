@@ -1,4 +1,4 @@
-import Recommendations from './components/Recommendations';
+import Recommendations from './components/LastSeenPokemons';
 import './App.css';
 
 function App() {

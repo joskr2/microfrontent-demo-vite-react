@@ -14,6 +14,7 @@ declare module 'shell/components' {
   export * from 'shell/components/Table';
   export * from 'shell/components/Text';
   export * from 'shell/components/DescriptionList';
+  export * from 'shell/components/Card';
 }
 
 declare module 'shell/components/Button' {
@@ -224,4 +225,104 @@ declare module 'shell/components/DescriptionList' {
   export const DescriptionList: React.FC<React.ComponentPropsWithoutRef<'dl'>>;
   export const DescriptionTerm: React.FC<React.ComponentPropsWithoutRef<'dt'>>;
   export const DescriptionDetails: React.FC<React.ComponentPropsWithoutRef<'dd'>>;
+}
+
+declare module 'shell/components/Card' {
+  import type React from 'react';
+
+  export interface CardProps {
+    className?: string;
+    children?: React.ReactNode;
+    onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
+  }
+
+  export const Card: React.ForwardRefExoticComponent<CardProps & React.RefAttributes<HTMLDivElement>>;
+}
+
+declare module 'shell/store' {
+  export interface PokemonType {
+    type: {
+      name: string;
+    };
+  }
+
+  export interface PokemonAbility {
+    ability: {
+      name: string;
+    };
+  }
+
+  export interface PokemonDetails {
+    id: number;
+    name: string;
+    sprites: {
+      front_default: string;
+      other?: {
+        'official-artwork'?: {
+          front_default: string;
+        };
+        dream_world?: {
+          front_default: string;
+        };
+      };
+    };
+    types?: PokemonType[];
+    abilities?: PokemonAbility[];
+    stats?: Array<{
+      base_stat: number;
+      stat: {
+        name: string;
+      };
+    }>;
+  }
+
+  export interface RootState {
+    selectedPokemon: {
+      currentPokemon: PokemonDetails | null;
+      history: PokemonDetails[];
+    };
+  }
+
+  export interface SelectedPokemonState {
+    currentPokemon: PokemonDetails | null;
+    history: PokemonDetails[];
+  }
+
+  export const selectLastSeenPokemons: (state: RootState) => PokemonDetails[];
+  export const selectCurrentPokemon: (state: RootState) => PokemonDetails | null;
+  export const selectPokemonHistory: (state: RootState) => PokemonDetails[];
+}
+
+declare module 'shell/store/store' {
+  export * from 'shell/store';
+}
+
+declare module 'shell/store/selectedPokemonSlice' {
+  import type { PayloadAction } from '@reduxjs/toolkit';
+  import type { PokemonDetails } from 'shell/store/pokemonApi';
+
+  export interface SelectedPokemonState {
+    currentPokemon: PokemonDetails | null;
+    history: PokemonDetails[];
+  }
+
+  export const setSelectedPokemon: (payload: PokemonDetails) => PayloadAction<PokemonDetails>;
+}
+
+declare module 'shell/store/pokemonApi' {
+  export interface PokemonDetails {
+    name: string;
+    sprites: {
+      front_default: string;
+      other?: {
+        'official-artwork'?: {
+          front_default: string;
+        };
+        dream_world?: {
+          front_default: string;
+        };
+      };
+    };
+    // Add other Pokemon properties you need
+  }
 }

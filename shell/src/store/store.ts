@@ -23,3 +23,5 @@ export type AppDispatch = typeof store.dispatch;
 // Export hooks for accessing the store
 export const selectCurrentPokemon = (state: RootState) => state.selectedPokemon.currentPokemon;
 export const selectPokemonHistory = (state: RootState) => state.selectedPokemon.history;
+export const selectLastSeenPokemons = (state: RootState) =>
+  state.selectedPokemon.history.slice(0, 5); 
